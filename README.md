@@ -125,7 +125,8 @@ Delete these from your game folder:
 ## Known limits
 - No joining mid-game. If the host leaves, the session ends.
 - Some puzzle cutscenes and scripted scares only play for the player who triggered them.
-- The larger lobby sizes (more than 2–3 players) have had little real-world testing. Bug reports welcome!
+- The larger lobby sizes (more than 2–3 players) have had little real-world testing. Bug reports welcome! Open an [issue](https://github.com/Solendor-S/Nun-Massacre-Multiplayer/issues)
+  or email **solendor.queries@gmail.com**.
 
 ## Building from source
 Requires the .NET SDK (6 or newer) and a Nun Massacre install with BepInEx (run the installer once).
