@@ -1,0 +1,14 @@
+# build output
+bin/
+obj/
+dist/
+.cache/
+shots/
+# binaries come from the release zip (see README > Building)
+*.dll
+*.pdb
+*.exe
+*.zip
+# never commit game files or decompiled code
+decomp/
+Nun Massacre_Data/

@@ -1,0 +1,20 @@
+<!-- Rebuild src/lib/Concentus.dll (Opus): the NuGet builds need System.Runtime/System.Memory facades this game's Mono lacks.
+     git clone https://github.com/lostromb/concentus <clone>; cd <clone>; git checkout "v1.2-c#"
+     dotnet build -c Release -p:ConcentusSrc=<clone>   then copy bin/Release/net48/Concentus.dll to src/lib/
+     Gotcha: this version's 24 kHz DECODER outputs silence; NunMP decodes at 48 kHz (see DirectMic.Decode). RoundTrip.cs.txt = the offline check. -->
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net48</TargetFramework>
+    <AssemblyName>Concentus</AssemblyName>
+    <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <Optimize>true</Optimize>
+    <DebugType>none</DebugType><Deterministic>true</Deterministic>
+    <DefineConstants>TRACE;PARITY</DefineConstants>
+    <NoWarn>$(NoWarn);CS1591;CS0162;CS0168;CS0219;CS0414</NoWarn>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="$(ConcentusSrc)/CSharp/Concentus/**/*.cs" Exclude="$(ConcentusSrc)/CSharp/Concentus/obj/**;$(ConcentusSrc)/CSharp/Concentus/bin/**" />
+    <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies" Version="1.0.3" PrivateAssets="all" />
+  </ItemGroup>
+</Project>

@@ -1,0 +1,18 @@
+using System; using System.Collections.Generic; using Concentus.Structs; using Concentus.Enums;
+// enc 24k -> dec 48k -> average pairs; compare to input (chirp 200..3000 Hz, speech band) by best-lag correlation
+class P { static void Main() {
+  const int R = 24000, F = 480;
+  var e = OpusEncoder.Create(R, 1, OpusApplication.OPUS_APPLICATION_VOIP);
+  e.Bitrate = 24000; e.UseVBR = true; e.SignalType = OpusSignal.OPUS_SIGNAL_VOICE; e.Complexity = 5;
+  var d = OpusDecoder.Create(R * 2, 1);
+  var inp = new List<double>(); var outp = new List<double>(); var pcm = new short[F]; var o = new short[F * 2]; var buf = new byte[255]; double ph = 0;
+  for (int f = 0; f < 100; f++) {
+    for (int i = 0; i < F; i++) { double t = (f * F + i) / (double)R; double fr = 200 + 2800 * (t / 2.0); pcm[i] = (short)(Math.Sin(ph) * 8000); ph += 2 * Math.PI * fr / R; inp.Add(pcm[i]); }
+    int len = e.Encode(pcm, 0, F, buf, 0, buf.Length);
+    int got = d.Decode(buf, 0, len, o, 0, F * 2, false);
+    for (int k = 0; k + 1 < got; k += 2) outp.Add((o[k] + o[k + 1]) / 2.0);
+  }
+  double best = 0; int bl = 0;
+  for (int lag = 0; lag < 600; lag++) { double sxy = 0, sxx = 0, syy = 0; for (int i = 4800; i + lag < outp.Count && i < inp.Count; i++) { sxy += inp[i] * outp[i + lag]; sxx += inp[i] * inp[i]; syy += outp[i + lag] * outp[i + lag]; } var c = sxy / Math.Sqrt(sxx * syy + 1); if (c > best) { best = c; bl = lag; } }
+  Console.WriteLine($"correlation={best:0.000} at lag {bl} samples ({bl * 1000.0 / R:0.0} ms)");
+}}
